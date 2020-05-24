@@ -12,7 +12,6 @@ class FlySpawner {
 
   FlySpawner(this.game) {
     start();
-    game.spawnFly();
   }
 
   void start() 
@@ -20,11 +19,15 @@ class FlySpawner {
     killAll();
     currentInterval = maxSpawnInterval;
     nextSpawn = DateTime.now().millisecondsSinceEpoch + currentInterval;
+    game.spawnFly();
   }
 
   void killAll() 
   {
-    game.flies.forEach((element) {element.isDead = true;});
+    while(game.flies.length > 0)
+    {
+      game.flies.removeLast();
+    }
   }
 
   void update(double t) 
