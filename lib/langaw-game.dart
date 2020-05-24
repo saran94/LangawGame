@@ -106,6 +106,10 @@ class LangawGame extends Game {
   }
 
   void update(double t) {
+    
+    //update background
+    background.update(t);
+
     //spawn flies
     spawner.update(t);
 
