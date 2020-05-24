@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:flame/flame.dart';
 import 'package:langaw/components/highScoreDisplay.dart';
+import 'package:langaw/components/musicButton.dart';
 import 'package:langaw/components/scoreDisplay.dart';
 import 'package:langaw/cotrollers/flySpawner.dart';
 import 'package:langaw/views/creditsView.dart';
@@ -17,6 +18,7 @@ import 'view.dart';
 import 'views/homeViews.dart';
 import 'components/startButton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class LangawGame extends Game {
   final SharedPreferences storage;
@@ -36,6 +38,9 @@ class LangawGame extends Game {
   int score;
   ScoreDisplay scoreDisplay;
   HighscoreDisplay highscoreDisplay;
+  AudioPlayer homeBGM;
+  AudioPlayer playingBGM;
+  MusicButton musicButton;
 
   LangawGame(this.storage) {
     initialize();
@@ -60,12 +65,23 @@ class LangawGame extends Game {
     creditsView = new CreditsView(this);
     scoreDisplay = new ScoreDisplay(this);
     highscoreDisplay = new HighscoreDisplay(this);
+    musicButton = new MusicButton(this);
     score = 0;
+
+    //music
+    homeBGM = await Flame.audio.loopLongAudio('bgm/home.mp3', volume: .25);
+    homeBGM.pause();
+    playingBGM =
+        await Flame.audio.loopLongAudio('bgm/playing.mp3', volume: .25);
+    playingBGM.pause();
+
+    playHomeBGM();
   }
 
   //Implementations
   void render(Canvas canvas) {
     background.render(canvas);
+    musicButton.render(canvas);
 
     flies.forEach((fly) => fly.render(canvas));
 
@@ -90,7 +106,6 @@ class LangawGame extends Game {
   }
 
   void update(double t) {
-    
     //spawn flies
     spawner.update(t);
 
@@ -111,6 +126,18 @@ class LangawGame extends Game {
         highscoreDisplay.updateHighscore();
       }
     }
+  }
+
+  void playHomeBGM() {
+    playingBGM.pause();
+    playingBGM.seek(Duration.zero);
+    homeBGM.resume();
+  }
+
+  void playPlayingBGM() {
+    homeBGM.pause();
+    homeBGM.seek(Duration.zero);
+    playingBGM.resume();
   }
 
   void resize(Size size) {
@@ -136,6 +163,11 @@ class LangawGame extends Game {
       }
     }
 
+    if (!isHandled && musicButton.rect.contains(d.globalPosition)) {
+      musicButton.onTapDown();
+      isHandled = true;
+    }
+
     if (!isHandled) {
       bool didHitAFly = false;
       flies.forEach((Fly fly) {
@@ -147,6 +179,9 @@ class LangawGame extends Game {
       });
 
       if (activeView == View.playing && !didHitAFly) {
+        Flame.audio
+            .play('sfx/haha' + (rand.nextInt(5) + 1).toString() + '.ogg');
+        playHomeBGM();
         activeView = View.lost;
       }
     }

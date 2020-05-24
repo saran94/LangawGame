@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flame/flame.dart';
 import 'package:langaw/langaw-game.dart';
 import 'package:flame/sprite.dart';
 
@@ -51,7 +52,7 @@ class Fly {
     {
       //change the flying fly image
       flyingSpriteIndex += 30 * t;
-      if (flyingSpriteIndex >= 2) {
+      while (flyingSpriteIndex >= 2) {
         flyingSpriteIndex -= 2;
       }
       spriteToRender = flyingSprite[flyingSpriteIndex.toInt()];
@@ -82,6 +83,7 @@ class Fly {
   {
     if(isDead != true)
     {
+      Flame.audio.play('sfx/ouch' + (game.rand.nextInt(11) + 1).toString() + '.ogg');
       isDead = true;
       if(game.activeView == View.playing)
       {

@@ -1,4 +1,4 @@
-package com.example.langaw
+package saran.dummy.app
 
 import io.flutter.embedding.android.FlutterActivity
 

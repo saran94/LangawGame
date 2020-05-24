@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flame/flame.dart';
 import 'package:flame/sprite.dart';
 import 'package:flutter/painting.dart';
 import 'package:langaw/components/fly.dart';
@@ -29,9 +30,7 @@ class Callout {
   }
 
   void render(Canvas c) {
-    
-    if(fly.isDead == false)
-    {
+    if (fly.isDead == false) {
       sprite.renderRect(c, rect);
       tp.paint(c, textOffset);
     }
@@ -41,17 +40,20 @@ class Callout {
     if (fly.game.activeView == View.playing) {
       value = value - .5 * t;
       if (value <= 0) {
+        Flame.audio.play(
+            'sfx/haha' + (fly.game.rand.nextInt(5) + 1).toString() + '.ogg');
+        fly.game.playHomeBGM();
         fly.game.activeView = View.lost;
       }
     }
 
     rect = Rect.fromLTWH(
-      fly.flyRect.left - (fly.game.tileSize * .25) > 0 
-        ? fly.flyRect.left - (fly.game.tileSize * .25)
-        : 0,
+      fly.flyRect.left - (fly.game.tileSize * .25) > 0
+          ? fly.flyRect.left - (fly.game.tileSize * .25)
+          : 0,
       fly.flyRect.top - (fly.game.tileSize * .5) > 0
-        ? fly.flyRect.top - (fly.game.tileSize * .5)
-        : 0,
+          ? fly.flyRect.top - (fly.game.tileSize * .5)
+          : 0,
       fly.game.tileSize * .75,
       fly.game.tileSize * .75,
     );
